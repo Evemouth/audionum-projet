@@ -12,3 +12,9 @@ Possibilité de jouer la musique en même temps que le dessin
 - Epaisseur du trait → son plus ou moins fort
 - Vitesse du trait → vitesse de la musique / durée de la note
 - Position (x, y) → note et hauteur de la note
+
+## Notes
+
+- Choisir une musique de base et lui appliquer des effets ?
+- Voir les différentes synthèses → couleurs ?
+- Temps réel
