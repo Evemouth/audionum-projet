@@ -1,12 +1,18 @@
 import pygame
+import time
+import numpy as np
+import units
+from sound import draw_to_sound
 
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+screen = pygame.display.set_mode((units.WINDOW_X, units.WINDOW_Y))
 clock = pygame.time.Clock()
 running = True
 
 mouse_down = False
 previous_mouse_pos = None
+width = 20
+color = "black"
 
 screen.fill("white")
 
@@ -20,8 +26,8 @@ while running:
             elif event.key == pygame.K_c:
                 running = False
             elif event.key == pygame.K_s:
-                pygame.image.save(screen, "dessin.png")
-            elif event.key == pygame.K_DELETE:
+                pygame.image.save(screen, f"dessins/dessin_{time.time()}.png")
+            elif (event.key in (pygame.K_DELETE, pygame.K_BACKSPACE, pygame.K_z)) and not mouse_down:
                 screen.fill("white")
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
@@ -32,10 +38,12 @@ while running:
                 previous_mouse_pos = None
 
     if mouse_down:
-        pygame.draw.circle(screen, "black", pygame.mouse.get_pos(), 9)
+        pygame.draw.circle(screen, color, pygame.mouse.get_pos(), width // 2)
         if previous_mouse_pos is not None:
-            pygame.draw.line(screen, "black", previous_mouse_pos, pygame.mouse.get_pos(), 20)
+            pygame.draw.line(screen, color, previous_mouse_pos, pygame.mouse.get_pos(), width)
         previous_mouse_pos = pygame.mouse.get_pos()
+        sound = draw_to_sound(pygame.mouse.get_pos(), pygame.mouse.get_rel(), width, color)
+        pygame.sndarray.make_sound(sound.astype(np.int16)).play()
 
     pygame.display.flip()
 
