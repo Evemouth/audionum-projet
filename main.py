@@ -14,6 +14,22 @@ previous_mouse_pos = None
 width = 20
 color = "black"
 
+PALETTE_COLORS = ["black", "red", "orange", "yellow", "green", "blue", "purple", "white"]
+PALETTE_SIZE = 40
+PALETTE_MARGIN = 5
+PALETTE_X = PALETTE_MARGIN 
+
+def draw_palette(surface, selected_color):
+    total_height = len(PALETTE_COLORS) * PALETTE_SIZE + (len(PALETTE_COLORS) - 1) * PALETTE_MARGIN
+    for i in range(len(PALETTE_COLORS)):
+        y = (units.WINDOW_Y - total_height) // 2 + i * (PALETTE_SIZE + PALETTE_MARGIN)
+        cx = PALETTE_X + PALETTE_SIZE // 2
+        cy = y + PALETTE_SIZE // 2
+        radius = PALETTE_SIZE // 2
+        pygame.draw.circle(surface, PALETTE_COLORS[i], (cx, cy), radius)
+        if PALETTE_COLORS[i] == selected_color:
+            pygame.draw.circle(surface, "gray", (cx, cy), radius, 3)
+
 screen.fill("white")
 
 while running:
@@ -31,7 +47,20 @@ while running:
                 screen.fill("white")
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                mouse_down = True
+                mx, my = pygame.mouse.get_pos()
+                clicked_palette = False
+                total_height = len(PALETTE_COLORS) * PALETTE_SIZE + (len(PALETTE_COLORS) - 1) * PALETTE_MARGIN
+                for i in range(len(PALETTE_COLORS)):
+                    y = (units.WINDOW_Y - total_height) // 2 + i * (PALETTE_SIZE + PALETTE_MARGIN)
+                    cx = PALETTE_X + PALETTE_SIZE // 2
+                    cy = y + PALETTE_SIZE // 2
+                    radius = PALETTE_SIZE // 2
+                    if (mx - cx)**2 + (my - cy)**2 <= radius**2:
+                        color = PALETTE_COLORS[i]
+                        clicked_palette = True
+                        break
+                if not clicked_palette:
+                    mouse_down = True
         elif event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 mouse_down = False
@@ -45,6 +74,7 @@ while running:
         sound = draw_to_sound(pygame.mouse.get_pos(), pygame.mouse.get_rel(), width, color)
         pygame.sndarray.make_sound(sound.astype(np.int16)).play()
 
+    draw_palette(screen, color)
     pygame.display.flip()
 
     clock.tick(60)
