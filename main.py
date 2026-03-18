@@ -1,23 +1,33 @@
 import pygame
+import pygame.midi
 import time
 import numpy as np
 import units
-from sound import draw_to_sound
+from sound import draw_to_sound, draw_to_note
 
 pygame.init()
+pygame.midi.init()
 screen = pygame.display.set_mode((units.WINDOW_X, units.WINDOW_Y))
 clock = pygame.time.Clock()
 running = True
+
+midi_out_id = pygame.midi.get_default_output_id()
+midi_out = pygame.midi.Output(midi_out_id, 0)
+midi_out.set_instrument(0)
+current_note = 0
+
 
 mouse_down = False
 previous_mouse_pos = None
 width = 20
 color = "black"
 
+MIDI = True
+
 PALETTE_COLORS = ["black", "red", "orange", "yellow", "green", "blue", "purple", "white"]
 PALETTE_SIZE = 40
 PALETTE_MARGIN = 5
-PALETTE_X = PALETTE_MARGIN 
+PALETTE_X = PALETTE_MARGIN
 
 def draw_palette(surface, selected_color):
     total_height = len(PALETTE_COLORS) * PALETTE_SIZE + (len(PALETTE_COLORS) - 1) * PALETTE_MARGIN
@@ -65,18 +75,29 @@ while running:
             if event.button == 1:
                 mouse_down = False
                 previous_mouse_pos = None
+                current_note = None
 
     if mouse_down:
         pygame.draw.circle(screen, color, pygame.mouse.get_pos(), width // 2)
         if previous_mouse_pos is not None:
             pygame.draw.line(screen, color, previous_mouse_pos, pygame.mouse.get_pos(), width)
         previous_mouse_pos = pygame.mouse.get_pos()
-        sound = draw_to_sound(pygame.mouse.get_pos(), pygame.mouse.get_rel(), width, color)
-        pygame.sndarray.make_sound(sound.astype(np.int16)).play()
+        if MIDI:
+            sound = draw_to_note(pygame.mouse.get_pos(), pygame.mouse.get_rel(), width, color)
+            if sound["pitch"] != current_note:
+                if current_note is not None:
+                    midi_out.note_off(current_note, 100)
+                midi_out.set_instrument(PALETTE_COLORS.index(color) * 2)
+                midi_out.note_on(sound["pitch"], 100)
+                current_note = sound["pitch"]
+        else:
+            sound = draw_to_sound(pygame.mouse.get_pos(), pygame.mouse.get_rel(), width, color)
+            pygame.sndarray.make_sound(sound.astype(np.int16)).play()
 
     draw_palette(screen, color)
     pygame.display.flip()
 
     clock.tick(60)
 
+pygame.midi.quit()
 pygame.quit()
