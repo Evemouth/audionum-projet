@@ -1,9 +1,11 @@
+<!-- fullWidth: false tocVisible: false tableWrap: true -->
+
 # Dessin'eirb X Musiqu'eirb
 
 ## Idée
 
-Produire une musique en fonction d'un dessin de l'utilisateur sur une fenêtre graphique.
-Enregristrement du dessin et du fichier audio.
+Produire une musique en fonction d'un dessin de l'utilisateur sur une fenêtre graphique.\
+Enregristrement du dessin et du fichier audio.\
 Possibilité de jouer la musique en même temps que le dessin
 
 ## Associations
@@ -18,8 +20,7 @@ Possibilité de jouer la musique en même temps que le dessin
 - Choisir une musique de base et lui appliquer des effets ?
 - Voir les différentes synthèses → couleurs ?
 - Temps réel
-
-- tonnets → exemple de Muse avec la grille et l'espace musical
+- tonnetz→ exemple de Muse avec la grille et l'espace musical
 - Accord majeur/mineur selon les zones → toujours arriver à jouer quelque chose de mélodieux
 - Afficher grille sur la fenetre
 - Changer les graduations des axes (+3/+4...) → posibilité à l'utilisateur de choisir l'échelle
@@ -28,8 +29,20 @@ Possibilité de jouer la musique en même temps que le dessin
 
 ## Draw to note
 
-x = notes (lettre)
+x = notes (lettre)\
 y = n° de l'octave
 
-notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
-octave = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+notes = \["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"\]\
+octave = \[0, 1, 2, 3, 4, 5, 6, 7, 8\]
+
+## Structure d'un fichier midi
+
+**Fichier midi :** contient un ou plusieurs morceaux
+**Pistes :** un fichier peut avoir plusieurs pistes(Piano, Batterie...)
+**Messages :** chaque piste contient une suite d'évènements (`note_on`, `note_off`...) avec un paramètre `time` (délai depuis le message précédent)
+
+## Bibliothèque `Mido`
+
+- Parser des fichiers midi
+- Possibilité de lire le fichier et envoyer les message en temps réel à `midi_out` avec fonction `play()`
+- Paramètre `time` en "ticks"
