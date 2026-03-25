@@ -37,9 +37,16 @@ octave = \[0, 1, 2, 3, 4, 5, 6, 7, 8\]
 
 ## Structure d'un fichier midi
 
-**Fichier midi :** contient un ou plusieurs morceaux
-**Pistes :** un fichier peut avoir plusieurs pistes(Piano, Batterie...)
-**Messages :** chaque piste contient une suite d'évènements (`note_on`, `note_off`...) avec un paramètre `time` (délai depuis le message précédent)
+**Fichier midi :** contient un ou plusieurs morceaux\
+**Pistes :** un fichier peut avoir plusieurs pistes(Piano, Batterie...)\
+**Messages :** chaque piste contient une suite d'évènements (`note_on`, `note_off`...) avec un paramètre `time` (délai depuis le message précédent)\
+
+**Remarques :**
+
+- En MIDI, pour arrêter une note, il existe normalement un message `note_off` mais beaucoup de fichiers utilisent un `note_on` avec une `vélocité` de 0 à la place
+- Le temps dans un fichier MIDI est un "delta-time" : c'est le temps écoulé depuis le message précédent dans la même piste
+  - Si Temps = 0 : Le message se produit exactement en même temps que le précédent. C'est comme ça qu'on crée des accords
+  - Si Temps > 0 : C'est le silence ou la durée qui s'écoule avant l'évènement suivant
 
 ## Bibliothèque `Mido`
 
