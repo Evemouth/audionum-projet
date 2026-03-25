@@ -3,7 +3,7 @@ import pygame.midi
 import time
 import numpy as np
 import units
-from sound import draw_to_sound, draw_to_note
+from sound import draw_to_sound, draw_to_note_rectangle, draw_to_note_triangle
 
 pygame.init()
 pygame.midi.init()
@@ -12,6 +12,8 @@ clock = pygame.time.Clock()
 running = True
 
 midi_out_id = pygame.midi.get_default_output_id()
+print(f"Using MIDI output ID: {midi_out_id}")
+
 midi_out = pygame.midi.Output(midi_out_id, 0)
 midi_out.set_instrument(0)
 current_note = 0
@@ -39,6 +41,31 @@ def draw_palette(surface, selected_color):
         pygame.draw.circle(surface, PALETTE_COLORS[i], (cx, cy), radius)
         if PALETTE_COLORS[i] == selected_color:
             pygame.draw.circle(surface, "gray", (cx, cy), radius, 3)
+
+def draw_rectangle_grid(surface):
+    for x in range(0, units.WINDOW_X, units.WINDOW_X//7):
+        pygame.draw.line(surface, "lightgray", (x, 0), (x, units.WINDOW_Y))
+    for y in range(0, units.WINDOW_Y, units.WINDOW_Y//12):
+        pygame.draw.line(surface, "lightgray", (0, y), (units.WINDOW_X, y))
+
+def draw_triangle_grid(surface):
+    dx = units.WINDOW_X // 12
+    dy = units.WINDOW_Y // 12
+
+    for y in range(0, units.WINDOW_Y + dy, dy):
+        pygame.draw.line(surface, "lightgray", (0, y), (units.WINDOW_X, y))
+
+    offset_x = 6 * dx
+
+    for x in range(-offset_x, units.WINDOW_X + offset_x, dx):
+        pygame.draw.line(surface, "lightgray", (x, 0), (x + offset_x, units.WINDOW_Y))
+        pygame.draw.line(surface, "lightgray", (x, 0), (x - offset_x, units.WINDOW_Y))
+
+def draw_grid(surface):
+    draw_triangle_grid(surface)
+
+def draw_to_note(mouse_position: tuple[int, int], mouse_speed: tuple[int, int], width: int, color: str) -> dict:
+    return draw_to_note_triangle(mouse_position, mouse_speed, width, color)
 
 screen.fill("white")
 
@@ -94,6 +121,7 @@ while running:
             sound = draw_to_sound(pygame.mouse.get_pos(), pygame.mouse.get_rel(), width, color)
             pygame.sndarray.make_sound(sound.astype(np.int16)).play()
 
+    draw_grid(screen)
     draw_palette(screen, color)
     pygame.display.flip()
 
