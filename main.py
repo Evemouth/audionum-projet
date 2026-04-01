@@ -3,7 +3,7 @@ import pygame.midi
 import time
 import numpy as np
 import units
-from sound import draw_to_sound, draw_to_note_rectangle, draw_to_note_triangle
+from sound import draw_to_sound, draw_to_note_rectangle, draw_to_note_triangle, draw_to_note_triangle_adaptative
 
 pygame.init()
 pygame.midi.init()
@@ -65,7 +65,7 @@ def draw_grid(surface):
     draw_triangle_grid(surface)
 
 def draw_to_note(mouse_position: tuple[int, int], mouse_speed: tuple[int, int], width: int, color: str) -> dict:
-    return draw_to_note_triangle(mouse_position, mouse_speed, width, color)
+    return draw_to_note_triangle_adaptative(mouse_position, mouse_speed, width, color)
 
 screen.fill("white")
 

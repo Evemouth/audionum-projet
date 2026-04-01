@@ -1,6 +1,9 @@
 import numpy as np
 import math
 import units
+from parser import parse_midi_file
+
+parsed_midi = parse_midi_file('au_clair_de_la_lune.mid')
 
 def draw_to_sound(mouse_position: tuple[int, int], mouse_speed: tuple[int, int], width: int, color: str) -> np.ndarray:
     frequence_echantillonnage = 44100
@@ -28,6 +31,9 @@ def draw_to_note_triangle(mouse_position: tuple[int, int], mouse_speed: tuple[in
     mx, my = mouse_position
     sx, sy = mouse_speed
 
+    num_columns = 24
+    num_rows = 12
+
     dx = units.WINDOW_X / 12
     dy = units.WINDOW_Y / 12
 
@@ -39,10 +45,36 @@ def draw_to_note_triangle(mouse_position: tuple[int, int], mouse_speed: tuple[in
 
     col_triangle = B + C
     row_triangle = math.floor(v)
-    d1 = col_triangle % 7
-    d2 = row_triangle % 12
+    d1 = col_triangle - (num_columns // 2)
+    d2 = row_triangle - (num_rows // 2)
 
     return {
-        "pitch": units.note_to_midi(d1, d2),
+        "pitch": 60 + d1 * 4 + d2 * 2,
+        "velocity": 100 + (abs(sx) + abs(sy)) // 2
+    }
+
+def draw_to_note_triangle_adaptative(mouse_position: tuple[int, int], mouse_speed: tuple[int, int], width: int, color: str) -> dict:
+    mx, my = mouse_position
+    sx, sy = mouse_speed
+
+    num_columns = 24
+    num_rows = 12
+
+    dx = units.WINDOW_X / 12
+    dy = units.WINDOW_Y / 12
+
+    u = mx / dx
+    v = my / dy
+
+    B = math.floor(u - v / 2)
+    C = math.floor(u + v / 2)
+
+    col_triangle = B + C
+    row_triangle = math.floor(v)
+    d1 = col_triangle - (num_columns // 2)
+    d2 = row_triangle - (num_rows // 2)
+
+    return {
+        "pitch": parsed_midi["first_note"] + d1 * list(parsed_midi["tones"].keys())[0] + d2 * list(parsed_midi["tones"].keys())[1],
         "velocity": 100 + (abs(sx) + abs(sy)) // 2
     }
