@@ -1,9 +1,10 @@
 import pygame
 import pygame.midi
 import time
+import math
 import numpy as np
 import units
-from sound import draw_to_sound, draw_to_note_rectangle, draw_to_note_triangle, draw_to_note_triangle_adaptative
+from sound import draw_to_sound, draw_to_note_rectangle, draw_to_note_triangle, draw_to_note_triangle_adaptative, draw_to_note_hexagonal
 from parser import parse_midi_file
 
 pygame.init()
@@ -69,10 +70,57 @@ def draw_triangle_grid(surface):
         pygame.draw.line(surface, "lightgray", (x, 0), (x - offset_x, units.WINDOW_Y))
 
 def draw_grid(surface):
-    draw_triangle_grid(surface)
+    draw_hex_grid(surface)
 
 def draw_to_note(mouse_position: tuple[int, int], mouse_speed: tuple[int, int], width: int, color: str) -> dict:
-    return draw_to_note_triangle_adaptative(parsed_midi, mouse_position, mouse_speed, width, color)
+    return draw_to_note_hexagonal(mouse_position, mouse_speed, width, color)
+    # return draw_to_note_triangle_adaptative(parsed_midi, mouse_position, mouse_speed, width, color)
+
+def draw_hexagon(surface, color, center_x, center_y, radius, border_width=1):
+    """Calcule et dessine un polygone hexagonal."""
+    points = []
+    for i in range(6):
+        # L'angle pour des hexagones "pointes en haut" commence à -30 degrés
+        angle_deg = 60 * i - 30
+        angle_rad = math.pi / 180 * angle_deg
+
+        # On calcule les coordonnées (x, y) de chaque sommet
+        px = center_x + radius * math.cos(angle_rad)
+        py = center_y + radius * math.sin(angle_rad)
+        points.append((px, py))
+
+    pygame.draw.polygon(surface, color, points, border_width)
+
+
+def draw_hex_grid(surface):
+    """Dessine un pavage hexagonal sur tout l'écran."""
+    # On définit la taille de l'hexagone (son rayon)
+    # Tu peux l'ajuster selon la résolution de ta fenêtre
+    R = units.WINDOW_X // 20
+
+    # Calcul des dimensions selon les formules mathématiques
+    hex_width = math.sqrt(3) * R
+    hex_height = 2 * R
+
+    # On calcule combien de colonnes et de lignes il faut pour remplir l'écran
+    # On ajoute +2 pour être sûr de bien couvrir les bords
+    cols = int(units.WINDOW_X / hex_width) + 2
+    rows = int(units.WINDOW_Y / (hex_height * 0.75)) + 2
+
+    for row in range(rows):
+        for col in range(cols):
+            # Position X de base
+            x = col * hex_width
+
+            # Position Y : on descend de 3/4 de la hauteur à chaque ligne
+            y = row * hex_height * 0.75
+
+            # Décalage : si la ligne est impaire, on décale tout d'un demi-hexagone à droite
+            if row % 2 == 1:
+                x += hex_width / 2
+
+            # On dessine l'hexagone ("lightgray" pour la couleur, 1 pour l'épaisseur du trait)
+            draw_hexagon(surface, "lightgray", x, y, R, 1)
 
 screen.fill("white")
 

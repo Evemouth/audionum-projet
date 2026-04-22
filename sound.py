@@ -72,6 +72,86 @@ def draw_to_note_triangle_adaptative(parsed_midi: dict, mouse_position: tuple[in
     d2 = row_triangle - (num_rows // 2)
 
     return {
-        "pitch": parsed_midi["first_note"] + d1 * list(parsed_midi["tones"].keys())[0] + d2 * list(parsed_midi["tones"].keys())[1],
+        "pitch": parsed_midi["first_note"] + d1 * list(parsed_midi["sorted_notes"].keys())[0] + d2 * list(parsed_midi["sorted_notes"].keys())[1],
+        "velocity": 100 + (abs(sx) + abs(sy)) // 2
+    }
+
+def draw_to_note_hexagonal(mouse_position: tuple[int, int], mouse_speed: tuple[int, int], width: int, color: str) -> dict:
+    mx, my = mouse_position
+    sx, sy = mouse_speed
+
+    R = units.WINDOW_X / 20
+
+    q_frac = (math.sqrt(3)/3 * mx - 1/3 * my) / R
+    r_frac = (2/3 * my) / R
+
+    x = q_frac
+    z = r_frac
+    y = -x - z
+
+    rx = round(x)
+    ry = round(y)
+    rz = round(z)
+
+    x_diff = abs(rx - x)
+    y_diff = abs(ry - y)
+    z_diff = abs(rz - z)
+
+    if x_diff > y_diff and x_diff > z_diff:
+        rx = -ry - rz
+    elif y_diff > z_diff:
+        ry = -rx - rz
+    else:
+        rz = -rx - ry
+
+    q = rx
+    r = rz
+    pitch = 60 + (q * 4) + (r * 7)
+    pitch = max(0, min(127, int(pitch)))
+
+    return {
+        "pitch": pitch,
+        "velocity": 100 + (abs(sx) + abs(sy)) // 2
+    }
+def draw_to_note_hexagonal_adaptative(parsed_midi: dict, mouse_position: tuple[int, int], mouse_speed: tuple[int, int], width: int, color: str) -> dict:
+    mx, my = mouse_position
+    sx, sy = mouse_speed
+
+    R = units.WINDOW_X / 20
+
+    cx = mx - (units.WINDOW_X / 2)
+    cy = my - (units.WINDOW_Y / 2)
+
+    q_frac = (math.sqrt(3)/3 * cx - 1/3 * cy) / R
+    r_frac = (2/3 * cy) / R
+
+    x = q_frac
+    z = r_frac
+    y = -x - z
+
+    rx = round(x)
+    ry = round(y)
+    rz = round(z)
+
+    x_diff = abs(rx - x)
+    y_diff = abs(ry - y)
+    z_diff = abs(rz - z)
+
+    if x_diff > y_diff and x_diff > z_diff:
+        rx = -ry - rz
+    elif y_diff > z_diff:
+        ry = -rx - rz
+    else:
+        rz = -rx - ry
+    q = rx
+    r = rz
+    note_centrale = parsed_midi["first_note"]
+    intervalle_1 = parsed_midi["sorted_notes"][0]
+    intervalle_2 = parsed_midi["sorted_notes"][1]
+    pitch = note_centrale + (q * intervalle_1) + (r * (intervalle_1 + intervalle_2))
+    pitch = max(0, min(127, int(pitch)))
+
+    return {
+        "pitch": pitch,
         "velocity": 100 + (abs(sx) + abs(sy)) // 2
     }
