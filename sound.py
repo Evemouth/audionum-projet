@@ -1,9 +1,6 @@
 import numpy as np
 import math
 import units
-from parser import parse_midi_file
-
-parsed_midi = parse_midi_file('au_clair_de_la_lune.mid')
 
 def draw_to_sound(mouse_position: tuple[int, int], mouse_speed: tuple[int, int], width: int, color: str) -> np.ndarray:
     frequence_echantillonnage = 44100
@@ -53,7 +50,7 @@ def draw_to_note_triangle(mouse_position: tuple[int, int], mouse_speed: tuple[in
         "velocity": 100 + (abs(sx) + abs(sy)) // 2
     }
 
-def draw_to_note_triangle_adaptative(mouse_position: tuple[int, int], mouse_speed: tuple[int, int], width: int, color: str) -> dict:
+def draw_to_note_triangle_adaptative(parsed_midi: dict, mouse_position: tuple[int, int], mouse_speed: tuple[int, int], width: int, color: str) -> dict:
     mx, my = mouse_position
     sx, sy = mouse_speed
 

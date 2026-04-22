@@ -4,12 +4,16 @@ import time
 import numpy as np
 import units
 from sound import draw_to_sound, draw_to_note_rectangle, draw_to_note_triangle, draw_to_note_triangle_adaptative
+from parser import parse_midi_file
 
 pygame.init()
 pygame.midi.init()
 screen = pygame.display.set_mode((units.WINDOW_X, units.WINDOW_Y))
 clock = pygame.time.Clock()
 running = True
+
+font = pygame.font.SysFont(None, 35)
+
 
 midi_out_id = pygame.midi.get_default_output_id()
 print(f"Using MIDI output ID: {midi_out_id}")
@@ -30,6 +34,9 @@ PALETTE_COLORS = ["black", "red", "orange", "yellow", "green", "blue", "purple",
 PALETTE_SIZE = 40
 PALETTE_MARGIN = 5
 PALETTE_X = PALETTE_MARGIN
+
+INPUT_FILE = "au_clair_de_la_lune.mid"
+parsed_midi = parse_midi_file(INPUT_FILE)
 
 def draw_palette(surface, selected_color):
     total_height = len(PALETTE_COLORS) * PALETTE_SIZE + (len(PALETTE_COLORS) - 1) * PALETTE_MARGIN
@@ -65,7 +72,7 @@ def draw_grid(surface):
     draw_triangle_grid(surface)
 
 def draw_to_note(mouse_position: tuple[int, int], mouse_speed: tuple[int, int], width: int, color: str) -> dict:
-    return draw_to_note_triangle_adaptative(mouse_position, mouse_speed, width, color)
+    return draw_to_note_triangle_adaptative(parsed_midi, mouse_position, mouse_speed, width, color)
 
 screen.fill("white")
 
@@ -123,6 +130,13 @@ while running:
 
     draw_grid(screen)
     draw_palette(screen, color)
+
+    screen.blit(font.render(f"Fichier : {INPUT_FILE}", True, "black"), (10, 10))
+    screen.blit(font.render(f"Première note : {parsed_midi['first_note']}", True, "black"), (10, 40))
+    screen.blit(font.render(f"Notes les plus présentes : {parsed_midi['sorted_notes'][0]} et {parsed_midi['sorted_notes'][1]}", True, "black"), (10, 70))
+    screen.blit(font.render(f"Intervalles les plus présents : {list(parsed_midi['tones'].keys())[0]} et {list(parsed_midi['tones'].keys())[1]}", True, "black"), (10, 100))
+
+
     pygame.display.flip()
 
     clock.tick(60)
