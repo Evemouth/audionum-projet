@@ -1,7 +1,6 @@
 import pygame
 import pygame.midi
 import time
-import math
 import numpy as np
 import units
 from sound import draw_to_sound, draw_to_note_rectangle, draw_to_note_triangle, draw_to_note_triangle_adaptative, draw_to_note_hexagonal

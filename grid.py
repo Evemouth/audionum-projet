@@ -4,6 +4,7 @@ import math
 
 side = 90
 height = math.sqrt(3) * side
+circle_ray = 20 
 
 def draw_rectangle_grid(surface):
     for x in range(0, units.WINDOW_X, units.WINDOW_X//7):
@@ -11,8 +12,7 @@ def draw_rectangle_grid(surface):
     for y in range(0, units.WINDOW_Y, units.WINDOW_Y//12):
         pygame.draw.line(surface, "lightgray", (0, y), (units.WINDOW_X, y))
 
-def draw_triangle_grid(surface):
-    #height = side * math.sqrt(3) / 2
+def draw_triangle_grid_dual(surface):
     t_height = (side + math.sqrt(side**2 + (height)**2)) / 2
     t_side = t_height * 2 / math.sqrt(3)
     color = "lightgray"
@@ -47,9 +47,16 @@ def draw_hexagon(surface, color, center, size):
     
     pygame.draw.polygon(surface, color, points, 1)
 
+    for point in points:
+        pygame.draw.line(surface, color, center, point, 1)
+
+    pygame.draw.circle(surface, "lightgray", center, circle_ray)
+    for point in points:
+        pygame.draw.circle(surface, "lightgray", point, circle_ray)
+
 def draw_hex_grid(surface):
     width = side * 2
-    color = "black"
+    color = "lightgray"
 
     for row in range(units.WINDOW_Y // int(height) + 1):
         for col in range(units.WINDOW_X // int(width * 0.75) + 1):
@@ -61,5 +68,5 @@ def draw_hex_grid(surface):
             draw_hexagon(surface, color, (x, y), side)
 
 def draw_grid(surface):
-    draw_triangle_grid(surface)
+    # draw_triangle_grid_dual(surface)
     draw_hex_grid(surface)
