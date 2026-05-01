@@ -48,21 +48,22 @@ def parse_midi_file(file_path):
     previous_note = None
 
     mid = mido.MidiFile(file_path)
-    for msg in mid.tracks[1]:
-        if msg.type == 'note_on':
-            if first_note is None:
-                first_note = msg.note
+    for track in mid.tracks:
+        for msg in track:
+            if msg.type == 'note_on' and msg.velocity > 0:
+                if first_note is None:
+                    first_note = msg.note
 
-            if freq_note.get(msg.note) is None:
-                freq_note[msg.note] = 0
-            freq_note[msg.note] += 1
+                if freq_note.get(msg.note) is None:
+                    freq_note[msg.note] = 0
+                freq_note[msg.note] += 1
 
-            if previous_note is not None:
-                tone = abs(previous_note - msg.note)
-                if freq_tone.get(tone) is None:
-                    freq_tone[tone] = 0
-                freq_tone[tone] += 1
-            previous_note = msg.note
+                if previous_note is not None:
+                    tone = abs(previous_note - msg.note)
+                    if freq_tone.get(tone) is None:
+                        freq_tone[tone] = 0
+                    freq_tone[tone] += 1
+                previous_note = msg.note
 
     sort_note = sorted(freq_note.items(), key=lambda item: item[1], reverse=True)
     print("Notes triées par fréquence : ", sort_note)
