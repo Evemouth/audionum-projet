@@ -3,7 +3,7 @@ import pygame.midi
 import time
 import numpy as np
 import units
-from sound import draw_to_sound, draw_to_note_hexagonal_adaptative
+from sound import draw_to_sound, draw_to_note_hexagonal_adaptative, hex_points_to_notes, draw_grid_notes
 from parser import parse_midi_file
 from grid import draw_grid
 
@@ -14,7 +14,6 @@ clock = pygame.time.Clock()
 running = True
 
 font = pygame.font.SysFont(None, 35)
-
 
 midi_out_id = pygame.midi.get_default_output_id()
 print(f"Using MIDI output ID: {midi_out_id}")
@@ -36,8 +35,16 @@ PALETTE_SIZE = 40
 PALETTE_MARGIN = 5
 PALETTE_X = PALETTE_MARGIN
 
-INPUT_FILE = "au_clair_de_la_lune.mid"
+INPUT_FILE = "get_lucky.mid"
+
+screen.fill("white")
+draw_grid(screen)
+
 parsed_midi = parse_midi_file(INPUT_FILE)
+hex_points_to_notes(parsed_midi)
+
+font_small = pygame.font.SysFont(None, 20)
+draw_grid_notes(screen, font_small)
 
 def draw_palette(surface, selected_color):
     total_height = len(PALETTE_COLORS) * PALETTE_SIZE + (len(PALETTE_COLORS) - 1) * PALETTE_MARGIN
@@ -51,10 +58,7 @@ def draw_palette(surface, selected_color):
             pygame.draw.circle(surface, "gray", (cx, cy), radius, 3)
 
 def draw_to_note(mouse_position: tuple[int, int], mouse_speed: tuple[int, int], width: int, color: str) -> dict:
-    return draw_to_note_hexagonal_adaptative(mouse_position, mouse_speed, width, color)
-    # return draw_to_note_triangle_adaptative(parsed_midi, mouse_position, mouse_speed, width, color)
-
-screen.fill("white")
+    return draw_to_note_hexagonal_adaptative(parsed_midi, mouse_position, mouse_speed, width, color)
 
 while running:
     for event in pygame.event.get():
@@ -69,6 +73,8 @@ while running:
                 pygame.image.save(screen, f"dessins/dessin_{time.time()}.png")
             elif (event.key in (pygame.K_DELETE, pygame.K_BACKSPACE, pygame.K_z)) and not mouse_down:
                 screen.fill("white")
+                draw_grid(screen)
+                draw_grid_notes(screen, font_small)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 mx, my = pygame.mouse.get_pos()
@@ -95,7 +101,9 @@ while running:
         pygame.draw.circle(screen, color, pygame.mouse.get_pos(), width // 2)
         if previous_mouse_pos is not None:
             pygame.draw.line(screen, color, previous_mouse_pos, pygame.mouse.get_pos(), width)
+        
         previous_mouse_pos = pygame.mouse.get_pos()
+        
         if MIDI:
             sound = draw_to_note(pygame.mouse.get_pos(), pygame.mouse.get_rel(), width, color)
             if sound["pitches"] != current_notes:
@@ -110,14 +118,12 @@ while running:
             sound = draw_to_sound(pygame.mouse.get_pos(), pygame.mouse.get_rel(), width, color)
             pygame.sndarray.make_sound(sound.astype(np.int16)).play()
 
-    draw_grid(screen)
     draw_palette(screen, color)
 
     screen.blit(font.render(f"Fichier : {INPUT_FILE}", True, "black"), (10, 10))
     screen.blit(font.render(f"Première note : {parsed_midi['first_note']}", True, "black"), (10, 40))
     screen.blit(font.render(f"Notes les plus présentes : {parsed_midi['sorted_notes'][0]} et {parsed_midi['sorted_notes'][1]}", True, "black"), (10, 70))
     screen.blit(font.render(f"Intervalles les plus présents : {list(parsed_midi['tones'].keys())[0]} et {list(parsed_midi['tones'].keys())[1]}", True, "black"), (10, 100))
-
 
     pygame.display.flip()
 
