@@ -6,6 +6,9 @@ side = 90
 height = math.sqrt(3) * side
 circle_ray = 20 
 
+# Coordinates of the centers of the hexagons
+hex_points = []
+
 def draw_rectangle_grid(surface):
     for x in range(0, units.WINDOW_X, units.WINDOW_X//7):
         pygame.draw.line(surface, "lightgray", (x, 0), (x, units.WINDOW_Y))
@@ -15,7 +18,7 @@ def draw_rectangle_grid(surface):
 def draw_triangle_grid_dual(surface):
     t_height = (side + math.sqrt(side**2 + (height)**2)) / 2
     t_side = t_height * 2 / math.sqrt(3)
-    color = "lightgray"
+    color = "blue"
     
     # Draw vertical lines
     for i in range(int(units.WINDOW_X / side)): # +1 to ensure coverage
@@ -38,6 +41,7 @@ def draw_triangle_grid_dual(surface):
 
 def draw_hexagon(surface, color, center, size):
     points = []
+    hex_points.append(center)
     for i in range(6):
         angle_deg = 60 * i
         angle_rad = math.radians(angle_deg)
@@ -45,6 +49,7 @@ def draw_hexagon(surface, color, center, size):
         y = center[1] + size * math.sin(angle_rad)
         points.append((x, y))
     
+    hex_points.extend(points)
     pygame.draw.polygon(surface, color, points, 1)
 
     for point in points:
@@ -68,5 +73,5 @@ def draw_hex_grid(surface):
             draw_hexagon(surface, color, (x, y), side)
 
 def draw_grid(surface):
-    # draw_triangle_grid_dual(surface)
+    #draw_triangle_grid_dual(surface)
     draw_hex_grid(surface)
