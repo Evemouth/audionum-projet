@@ -36,6 +36,9 @@ L'objectif de ce projet était de créer une application qui permet de jouer du 
 
 L'application que nous avons développée utilise la bibliothèque Pygame pour créer une interface graphique où l'utilisateur peut dessiner avec la souris.
 
+- couleur 
+- information affichée
+
 \subsection{La génération du son}
 
 La première version de l'application générait du son de manière continue en fonction de la position du curseur sur la fenêtre graphique. 
@@ -44,8 +47,15 @@ On partait d'une note de base (un \textit{La} à 440~Hz), et plus l'utilisateur 
 Pour assurer un retour audio immédiat et fluide pendant le dessin, on envoyait un signal sonore court (de 0,1 seconde) de manière répétitive.
 Néanmoins, cela produisait un son peu mélodieux et peu agréable à l'écoute.\\
 
+- position (x, y) → note, octave
+
+- générer grille en fonction d'une musique → parsing MIDI → intervalle...
+
 \subsection{Les grilles}
 
+- pavage carré
+- pavage triangle
+- pavalage hexagonal
 
 \section{Conclusion}
 \end{document}
