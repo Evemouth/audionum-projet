@@ -47,15 +47,17 @@ On partait d'une note de base (un \textit{La} à 440~Hz), et plus l'utilisateur 
 Pour assurer un retour audio immédiat et fluide pendant le dessin, on envoyait un signal sonore court (de 0,1 seconde) de manière répétitive.
 Néanmoins, cela produisait un son peu mélodieux et peu agréable à l'écoute.\\
 
-- position (x, y) → note, octave
+Nous avons ensuite décidé d'utiliser des notes au format MIDI pour générer des sons plus harmonieux.
+La position horizontale (x) était convertie en une note dans la gamme ["C", "C\#", "D", "D\#", "E", "F", "F\#", "G", "G\#", "A", "A\#", "B"] tandis que la position verticale (y) donnait l'octave de la note.\\
 
-- générer grille en fonction d'une musique → parsing MIDI → intervalle...
+Finalement, nous avons choisi de construire un système de grille avec différents pavages, généré à partir d'un fichier MIDI.
+Ainsi, nous utilisons la bibliothèque \texttt{Mido} pour lire un fichier MIDI d'une musique et extraire la première note du morceau et les deux intervalles les plus fréquents.
 
 \subsection{Les grilles}
 
 - pavage carré
 - pavage triangle
-- pavalage hexagonal
+- pavalage hexagonal → parcours de graphe
 
 \section{Conclusion}
 \end{document}
