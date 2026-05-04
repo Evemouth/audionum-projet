@@ -12,7 +12,7 @@
 \usepackage{listings}
 \usepackage{amsmath}
 
-\title{Rapport \\ - \\ Projet Audionumérique \\ - \\ Association musique et dessin}
+\title{Rapport \\ - \\ Projet Audionumérique \\ - \\ Application de dessin sonore}
 \author{Alexis Gaudray Bouju \\ Eve Turchet}
 \date{Semestre 8 - 2025/2026}
 
@@ -29,17 +29,29 @@
 
 Dans le cadre du projet d'audionumérique, nous avons exploré la relation entre la musique et le dessin. 
 L'objectif de ce projet était de créer une application qui permet de jouer du son en temps réel à partir du dessin de l'utilisateur sur une fenêtre graphique.
+Le projet est disponible sur GitHub à l'adresse suivante : \url{https://github.com/Evemouth/audionum-projet}.
 
 \section{L'application}
 
+Notre application se décompose en trois parties principales : l'interface graphique présentée en section~\ref{sec:interface}, la génération du son détaillée en section~\ref{sec:son} et la création des grilles en section~\ref{sec:grilles}.
+
 \subsection{L'interface graphique}
+\label{sec:interface}
 
 L'application que nous avons développée utilise la bibliothèque Pygame pour créer une interface graphique où l'utilisateur peut dessiner avec la souris.
+Sur la fenêtre graphique, nous affichons les informations relatives au fichier MIDI comme son nom, la première note du morceau ou encore les deux intervalles principaux. \\
 
-- couleur 
-- information affichée
+En fond de l'interface, nous retrouvons une grille construite à partir du fichier MIDI qui sert de base à l'utilisateur pour la génération du son.
+De cette manière, l'utilisateur peut repérer la première note du morceau au centre de la grille en rouge et se guider des axes pour créer des mélodies plus harmonieuses.\\
 
+L'interface comporte également une palette de couleurs qui représente des instruments de musique différents. 
+Cela permet à l'utilisateur de découvrir différentes sonorités en mélangeant les couleurs dans son dessin.\\
+
+Enfin, l'utilisateur a la possiblité de sauvegarder son dessin avec la touche \texttt{CTRL+S} ou de réinitialiser la fenêtre avec la touche \texttt{CTRL+Z}.
+
+% AJOUTER IMAGE
 \subsection{La génération du son}
+\label{sec:son}
 
 La première version de l'application générait du son de manière continue en fonction de la position du curseur sur la fenêtre graphique. 
 Dans cette première vapproche, on calculait une fréquence à partir des coordonnées du curseur. 
@@ -48,16 +60,27 @@ Pour assurer un retour audio immédiat et fluide pendant le dessin, on envoyait 
 Néanmoins, cela produisait un son peu mélodieux et peu agréable à l'écoute.\\
 
 Nous avons ensuite décidé d'utiliser des notes au format MIDI pour générer des sons plus harmonieux.
-La position horizontale (x) était convertie en une note dans la gamme ["C", "C\#", "D", "D\#", "E", "F", "F\#", "G", "G\#", "A", "A\#", "B"] tandis que la position verticale (y) donnait l'octave de la note.\\
+La position horizontale (x) était convertie en une note dans la gamme \textit{["C", "C\#", "D", "D\#", "E", "F", "F\#", "G", "G\#", "A", "A\#", "B"]} tandis que la position verticale (y) donnait l'octave de la note.\\
 
 Finalement, nous avons choisi de construire un système de grille avec différents pavages, généré à partir d'un fichier MIDI.
-Ainsi, nous utilisons la bibliothèque \texttt{Mido} pour lire un fichier MIDI d'une musique et extraire la première note du morceau et les deux intervalles les plus fréquents.
+Ainsi, nous utilisons la bibliothèque \texttt{Mido} pour parcourir un fichier MIDI d'une musique et extraire la première note du morceau et les deux intervalles les plus fréquents.
 
 \subsection{Les grilles}
+\label{sec:grilles}
 
 - pavage carré
 - pavage triangle
-- pavalage hexagonal → parcours de graphe
+- pavalage hexagonal → parcours de graphe BFS
 
 \section{Conclusion}
+
+création d'une application de dessin sonore qui donne un instrument intuitif
+
+inspiré de Tonnetz [\url{https://thetonnetz.com/}] pour la grille hexagonale
+
+améliorations :
+- possibilité de changer la grille depuis l'interface
+- possibilité de dooner le fichier midi en argument de la ligne de commande
+- enregistrer le son généré en plus du dessin
+- pouvoir retracer un dessin en fonction d'un fichier midi
 \end{document}
