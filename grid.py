@@ -55,13 +55,13 @@ def draw_hexagon(surface, color, center, size):
     for point in points:
         pygame.draw.line(surface, color, center, point, 1)
 
-    pygame.draw.circle(surface, "lightgray", center, circle_ray)
+    pygame.draw.circle(surface, "gainsboro", center, circle_ray)
     for point in points:
-        pygame.draw.circle(surface, "lightgray", point, circle_ray)
+        pygame.draw.circle(surface, "gainsboro", point, circle_ray)
 
 def draw_hex_grid(surface):
     width = side * 2
-    color = "lightgray"
+    color = "gainsboro"
 
     for row in range(units.WINDOW_Y // int(height) + 1):
         for col in range(units.WINDOW_X // int(width * 0.75) + 1):

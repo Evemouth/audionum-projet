@@ -68,11 +68,11 @@ def draw_grid_notes(surface, font):
     # Print the MIDI note names on the grid points
     for point, note in hex_points_notes.items():
         if note is not None:
-            note_name = units.lettres[note % 12] + str(note // 12 - 1)
+            note_name = units.midi_to_note(note)
             if point == first_point:
-                text_surf = font.render(note_name, True, "red") # the first note
+                text_surf = font.render(note_name, True, "tomato") # the first note
             else:
-                text_surf = font.render(note_name, True, "black")
+                text_surf = font.render(note_name, True, "lightslategray")
             text_rect = text_surf.get_rect(center=point)
             surface.blit(text_surf, text_rect)
 

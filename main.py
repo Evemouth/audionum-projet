@@ -13,7 +13,7 @@ screen = pygame.display.set_mode((units.WINDOW_X, units.WINDOW_Y))
 clock = pygame.time.Clock()
 running = True
 
-font = pygame.font.SysFont(None, 35)
+font = pygame.font.SysFont('freeserif', 30, bold=True)
 
 midi_out_id = pygame.midi.get_default_output_id()
 print(f"Using MIDI output ID: {midi_out_id}")
@@ -43,7 +43,7 @@ draw_grid(screen)
 parsed_midi = parse_midi_file(INPUT_FILE)
 hex_points_to_notes(parsed_midi)
 
-font_small = pygame.font.SysFont(None, 20)
+font_small = pygame.font.SysFont('Arial', 15, bold=True)
 draw_grid_notes(screen, font_small)
 
 def draw_palette(surface, selected_color):
@@ -54,6 +54,7 @@ def draw_palette(surface, selected_color):
         cy = y + PALETTE_SIZE // 2
         radius = PALETTE_SIZE // 2
         pygame.draw.circle(surface, PALETTE_COLORS[i], (cx, cy), radius)
+        pygame.draw.circle(surface, "black", (cx, cy), radius, width=3)
         if PALETTE_COLORS[i] == selected_color:
             pygame.draw.circle(surface, "gray", (cx, cy), radius, 3)
 
@@ -95,6 +96,10 @@ while running:
             if event.button == 1:
                 mouse_down = False
                 previous_mouse_pos = None
+                if MIDI and current_notes != [None, None, None]:
+                    for pitch in current_notes:
+                        if pitch is not None:
+                            midi_out.note_off(pitch, 100)
                 current_notes = [None, None, None]
 
     if mouse_down:
@@ -110,7 +115,7 @@ while running:
                 if current_notes != [None, None, None]:
                     for pitch in current_notes:
                         midi_out.note_off(pitch, 100)
-                midi_out.set_instrument(PALETTE_COLORS.index(color) * 2)
+                midi_out.set_instrument(units.instruments[PALETTE_COLORS.index(color)])
                 for pitch in sound["pitches"]:
                     midi_out.note_on(pitch, 100)
                 current_notes = sound["pitches"]
@@ -120,10 +125,19 @@ while running:
 
     draw_palette(screen, color)
 
-    screen.blit(font.render(f"Fichier : {INPUT_FILE}", True, "black"), (10, 10))
-    screen.blit(font.render(f"Première note : {parsed_midi['first_note']}", True, "black"), (10, 40))
-    screen.blit(font.render(f"Notes les plus présentes : {parsed_midi['sorted_notes'][0]} et {parsed_midi['sorted_notes'][1]}", True, "black"), (10, 70))
-    screen.blit(font.render(f"Intervalles les plus présents : {list(parsed_midi['tones'].keys())[0]} et {list(parsed_midi['tones'].keys())[1]}", True, "black"), (10, 100))
+    info_texts = [
+        font.render(f"Fichier : {INPUT_FILE}", True, "black"),
+        font.render(f"Première note : {units.midi_to_note(parsed_midi['first_note'])}", True, "black"),
+        font.render(f"Notes les plus présentes : {units.midi_to_note(parsed_midi['sorted_notes'][0][0])} et {units.midi_to_note(parsed_midi['sorted_notes'][1][0])}" if isinstance(parsed_midi['sorted_notes'][0], tuple) else f"Notes les plus présentes : {units.midi_to_note(parsed_midi['sorted_notes'][0])} et {units.midi_to_note(parsed_midi['sorted_notes'][1])}", True, "black"),
+        font.render(f"Intervalles les plus présents : {list(parsed_midi['tones'].keys())[0]} et {list(parsed_midi['tones'].keys())[1]}", True, "black")
+    ]
+
+    bg_rect = pygame.Rect(5, 5, max(t.get_width() for t in info_texts) + 20, len(info_texts) * 30 + 10)
+    pygame.draw.rect(screen, "white", bg_rect)
+    pygame.draw.rect(screen, "black", bg_rect, width=3, border_radius=5)
+
+    for i, t in enumerate(info_texts):
+        screen.blit(t, (15, 10 + i * 30))
 
     pygame.display.flip()
 
