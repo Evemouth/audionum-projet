@@ -1,0 +1,51 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[hidelinks]{hyperref}
+\usepackage{listings}
+\usepackage{amsmath}
+
+\title{Rapport \\ - \\ Projet Audionumérique \\ - \\ Association musique et dessin}
+\author{Alexis Gaudray Bouju \\ Eve Turchet}
+\date{Semestre 8 - 2025/2026}
+
+\graphicspath{./img/}
+
+\begin{document}
+\maketitle
+\newpage
+\renewcommand{\contentsname}{Table des matières}
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+Dans le cadre du projet d'audionumérique, nous avons exploré la relation entre la musique et le dessin. 
+L'objectif de ce projet était de créer une application qui permet de jouer du son en temps réel à partir du dessin de l'utilisateur sur une fenêtre graphique.
+
+\section{L'application}
+
+\subsection{L'interface graphique}
+
+L'application que nous avons développée utilise la bibliothèque Pygame pour créer une interface graphique où l'utilisateur peut dessiner avec la souris.
+
+\subsection{La génération du son}
+
+La première version de l'application générait du son de manière continue en fonction de la position du curseur sur la fenêtre graphique. 
+Dans cette première vapproche, on calculait une fréquence à partir des coordonnées du curseur. 
+On partait d'une note de base (un \textit{La} à 440~Hz), et plus l'utilisateur déplaçait sa souris vers la droite ou vers le bas de l'écran, plus la note devenait aiguë. 
+Pour assurer un retour audio immédiat et fluide pendant le dessin, on envoyait un signal sonore court (de 0,1 seconde) de manière répétitive.
+Néanmoins, cela produisait un son peu mélodieux et peu agréable à l'écoute.\\
+
+\subsection{Les grilles}
+
+
+\section{Conclusion}
+\end{document}
