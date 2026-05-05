@@ -12,7 +12,7 @@
 \usepackage{listings}
 \usepackage{amsmath}
 
-\title{Rapport \\ - \\ Projet Audionumérique \\ - \\ Application de dessin sonore}
+\title{RAPPORT \\ Projet Audionumérique - Application de dessin sonore}
 \author{Alexis Gaudray Bouju \\ Eve Turchet}
 \date{Semestre 8 - 2025/2026}
 
@@ -20,7 +20,6 @@
 
 \begin{document}
 \maketitle
-\newpage
 \renewcommand{\contentsname}{Table des matières}
 \tableofcontents
 \newpage
@@ -39,7 +38,7 @@ Notre application se décompose en trois parties principales : l'interface graph
 \label{sec:interface}
 
 L'application que nous avons développée utilise la bibliothèque Pygame pour créer une interface graphique où l'utilisateur peut dessiner avec la souris.
-Sur la fenêtre graphique, nous affichons les informations relatives au fichier MIDI comme son nom, la première note du morceau ou encore les deux intervalles principaux. \\
+Sur la fenêtre graphique présentée en Figure~\ref{fig:interface}, nous affichons les informations relatives au fichier MIDI comme son nom, la première note du morceau ou encore les deux intervalles principaux. \\
 
 En fond de l'interface, nous retrouvons une grille construite à partir du fichier MIDI qui sert de base à l'utilisateur pour la génération du son.
 De cette manière, l'utilisateur peut repérer la première note du morceau au centre de la grille en rouge et se guider des axes pour créer des mélodies plus harmonieuses.\\
@@ -49,14 +48,22 @@ Cela permet à l'utilisateur de découvrir différentes sonorités en mélangean
 
 Enfin, l'utilisateur a la possiblité de sauvegarder son dessin avec la touche \texttt{CTRL+S} ou de réinitialiser la fenêtre avec la touche \texttt{CTRL+Z}.
 
-% AJOUTER IMAGE
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.49\textwidth]{img/grille_vide.png}
+    \hfill
+    \includegraphics[width=0.49\textwidth]{img/grille_dessin.png}
+    \caption{Interface graphique de l'application initiale (à droite) et avec un dessin réalisé par l'utilisateur (à gauche).}
+    \label{fig:interface}
+\end{figure}
+
 \subsection{La génération du son}
 \label{sec:son}
 
 La première version de l'application générait du son de manière continue en fonction de la position du curseur sur la fenêtre graphique. 
 Dans cette première vapproche, on calculait une fréquence à partir des coordonnées du curseur. 
 On partait d'une note de base (un \textit{La} à 440~Hz), et plus l'utilisateur déplaçait sa souris vers la droite ou vers le bas de l'écran, plus la note devenait aiguë. 
-Pour assurer un retour audio immédiat et fluide pendant le dessin, on envoyait un signal sonore court (de 0,1 seconde) de manière répétitive.
+Pour assurer un retour audio immédiat et fluide pendant le dessin, on envoyait un signal sonore court de manière répétitive.
 Néanmoins, cela produisait un son peu mélodieux et peu agréable à l'écoute.\\
 
 Nous avons ensuite décidé d'utiliser des notes au format MIDI pour générer des sons plus harmonieux.
@@ -68,9 +75,11 @@ Ainsi, nous utilisons la bibliothèque \texttt{Mido} pour parcourir un fichier M
 \subsection{Les grilles}
 \label{sec:grilles}
 
-- pavage carré
-- pavage triangle
-- pavalage hexagonal → parcours de graphe BFS
+Dans un premier temps, nous avons divisé la fenêtre graphique selon un pavage rectangulaire : l'axe des abscisses était divisé en sept pour représenter les octaves et l'axe des ordonnées était séparé en douze pour représenter les notes de la gamme chromatique.
+
+Par la suite, nous avons réfléchi à un pavage héxagonal inspiré de Tonnetz [\url{https://thetonnetz.com/}].
+Dans ce pavage, les notes sont organisées de manière à ce que les intervalles harmoniques soient représentés par des déplacements simples sur la grille. 
+Par exemple, un déplacement vers
 
 \section{Conclusion}
 
