@@ -60,37 +60,37 @@ Enfin, l'utilisateur a la possiblité de sauvegarder son dessin avec la touche \
 \subsection{La génération du son}
 \label{sec:son}
 
-La première version de l'application générait du son de manière continue en fonction de la position du curseur sur la fenêtre graphique. 
-Dans cette première approche, nous calculions une fréquence à partir des coordonnées du curseur. 
-Nous partions d'une note de base (un \textit{La} à 440~Hz), et plus l'utilisateur déplaçait sa souris vers la droite ou vers le bas de l'écran, plus la note devenait aiguë. 
+La première version de l'application générait du son de manière continue en fonction de la position du curseur sur la fenêtre graphique.
+Dans cette première approche, nous calculions une fréquence à partir des coordonnées du curseur.
+Nous partions d'une note de base (un \textit{La} à 440~Hz), et plus l'utilisateur déplaçait sa souris vers la droite ou vers le bas de l'écran, plus la note devenait aiguë.
 Pour assurer un retour audio immédiat et fluide pendant le dessin, on envoyait un signal sonore court de manière répétitive.
 Néanmoins, cela produisait un son peu mélodieux et peu agréable à l'écoute.\\
 
 Nous avons ensuite décidé d'utiliser des notes au format MIDI pour générer des sons plus harmonieux.
-La position horizontale (x) était convertie en une note dans la gamme \textit{["C", "C\#", "D", "D\#", "E", "F", "F\#", "G", "G\#", "A", "A\#", "B"]} tandis que la position verticale (y) donnait l'octave de la note. 
+La position horizontale (x) était convertie en une note dans la gamme \textit{["C", "C\#", "D", "D\#", "E", "F", "F\#", "G", "G\#", "A", "A\#", "B"]} tandis que la position verticale (y) donnait l'octave de la note.
 Cette version donnait un résultat exploitable, mais se limitait à la reproduction d'un piano sous forme d'une grille rectangulaire.\\
 
 Finalement, nous avons choisi de construire un système de grille avec différents pavages, générés à partir d'un fichier MIDI.
 L'idée est d'adapter la disposition des notes du pavage en fonction d'une musique de référence, afin de créer un espace musical sur mesure.
-Nous utilisons donc la bibliothèque \texttt{Mido} pour parcourir un fichier MIDI d'une musique et extraire la première note du morceau, la note la plus jouée et les deux intervalles les plus fréquents. 
-Cela permet de placer au centre du pavage la première note, et de graduer les différents axes avec les intervalles le plus fréquents. 
+Nous utilisons donc la bibliothèque \texttt{Mido} pour parcourir un fichier MIDI d'une musique et extraire la première note du morceau, la note la plus jouée et les deux intervalles les plus fréquents.
+Cela permet de placer au centre du pavage la première note, et de graduer les différents axes avec les intervalles le plus fréquents.
 Ainsi l'utilisateur peut rejouer la musique de départ facilement dans ce pavage en partant de la case centrale et en se déplaçant (de proche en proche la plupart du temps) sur les notes.
 
 \subsection{Les grilles}
 \label{sec:grilles}
 
-Nous avons essayé plusieurs pavages avec des propriétés différentes, plus ou moins interressant musicalement. 
+Nous avons essayé plusieurs pavages avec des propriétés différentes, plus ou moins interressant musicalement.
 Pour commencer, nous avons réalisé un pavage rectangulaire.
-Dans ce pavage, chaque case correspond à une note MIDI : l'axe des abscisses est divisé en sept pour représenter les octaves et l'axe des ordonnées est séparé en douze pour représenter les notes de la gamme chromatique. 
+Dans ce pavage, chaque case correspond à une note MIDI : l'axe des abscisses est divisé en sept pour représenter les octaves et l'axe des ordonnées est séparé en douze pour représenter les notes de la gamme chromatique.
 Cependant, ce pavage est vite limitant car il ne possède que deux axes.\\
 
-Nous nous sommes donc ensuite dirigé vers le pavage triangulaire qui a l'avantage d'avoir un axe de plus en théorie. 
-En pratique, cet axe de plus est juste la combinaison des deux autres, donc pas réellement de possibilité supplémentaire. 
-L'inconvéniant de ce pavage est l'impossibilité de ce déplacer sur un même axe en cotinu. 
+Nous nous sommes donc ensuite dirigé vers le pavage triangulaire qui a l'avantage d'avoir un axe de plus en théorie.
+En pratique, cet axe de plus est juste la combinaison des deux autres, donc pas réellement de possibilité supplémentaire.
+L'inconvéniant de ce pavage est l'impossibilité de ce déplacer sur un même axe en cotinu.
 En passant sur la base du triangle, on arrive ensuite sur un sommet, qui rend impossible le passage à son voisin sans toucher une autre case.\\
 
-Nous nous sommes finalement tournés vers le pavage hexagonal qui combine plusieurs avantages : il a plus d'axe que le pavage rectangulaire n'a pas le problème de continuité du triangle.
-Dans ce pavage inspiré de Tonnetz [\url{https://thetonnetz.com/}], les notes sont organisées de manière à ce que les intervalles harmoniques soient représentés par des déplacements simples sur la grille. 
+Nous nous sommes finalement tournés vers le pavage de combinaisons hexagonales pour introduire une nouvelle dimension en ajoutant des points aux sommets des hexagones.
+Dans ce pavage inspiré de Tonnetz [\url{https://thetonnetz.com/}], les notes sont organisées de manière à ce que les intervalles harmoniques soient représentés par des déplacements simples sur la grille.
 Par exemple, un déplacement vers la droite augmente la note d'un intervalle, un déplacement sur un axe diagonal augmente la note d'un deuxième intervalle et un déplacement sur la deuxième diagonale fait varier la note avec la somme des deux intervalles précédents.
 Concernant la conception de ce pavage, nous avons enregistré tous les sommets et centres des hexagones puis nous leur avons associé une note à l'aide d'un parcours en largeur du graphe formé ainsi.
 
@@ -101,8 +101,6 @@ Nous avons ainsi conçu un instrument de musique visuel et intuitif. \\
 
 Pour donner suite au projet, plusieurs piste d'amélioration pourraient être envisagées.
 En effet, il serait interressant de pouvoir changer de pavage depuis l'interface graphique et trouver quel pavage s'adapte le mieux à une musique.
-Pour terminer, nous pourrions ajouter une fonctionnalité permettant de retracer un dessin en fonction d'un fichier MIDI.\\
-
-- enregistrer le son généré en plus du dessin ??
+Pour terminer, nous pourrions ajouter une fonctionnalité permettant de retracer un dessin en fonction d'un fichier MIDI. Actuellement, l'utilisateur peut sauvegarder le dessin final ainsi que le fichier MIDI généré de ce qu'il a joué (en faisant \texttt{Ctrl-S}) mais il serait également intéressant d'avoir la vidéo du traçage et du son généré en même temps.\\
 
 \end{document}
