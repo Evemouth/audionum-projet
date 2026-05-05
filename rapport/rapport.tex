@@ -26,7 +26,7 @@
 
 \section{Introduction}
 
-Dans le cadre du projet d'audionumérique, nous avons exploré la relation entre la musique et le dessin. 
+Dans le cadre du projet d'audionumérique, nous avons exploré la relation entre la musique et le dessin.
 L'objectif de ce projet était de créer une application qui permet de jouer du son en temps réel à partir du dessin de l'utilisateur sur une fenêtre graphique.
 Le projet est disponible sur GitHub à l'adresse suivante : \url{https://github.com/Evemouth/audionum-projet}.
 
@@ -43,7 +43,7 @@ Sur la fenêtre graphique présentée en Figure~\ref{fig:interface}, nous affich
 En fond de l'interface, nous retrouvons une grille construite à partir du fichier MIDI qui sert de base à l'utilisateur pour la génération du son.
 De cette manière, l'utilisateur peut repérer la première note du morceau au centre de la grille en rouge et se guider des axes pour créer des mélodies plus harmonieuses.\\
 
-L'interface comporte également une palette de couleurs qui représente des instruments de musique différents. 
+L'interface comporte également une palette de couleurs qui représente des instruments de musique différents.
 Cela permet à l'utilisateur de découvrir différentes sonorités en mélangeant les couleurs dans son dessin.\\
 
 Enfin, l'utilisateur a la possiblité de sauvegarder son dessin avec la touche \texttt{CTRL+S} ou de réinitialiser la fenêtre avec la touche \texttt{CTRL+Z}.
@@ -67,13 +67,21 @@ Pour assurer un retour audio immédiat et fluide pendant le dessin, on envoyait 
 Néanmoins, cela produisait un son peu mélodieux et peu agréable à l'écoute.\\
 
 Nous avons ensuite décidé d'utiliser des notes au format MIDI pour générer des sons plus harmonieux.
-La position horizontale (x) était convertie en une note dans la gamme \textit{["C", "C\#", "D", "D\#", "E", "F", "F\#", "G", "G\#", "A", "A\#", "B"]} tandis que la position verticale (y) donnait l'octave de la note.\\
+La position horizontale (x) était convertie en une note dans la gamme \textit{["C", "C\#", "D", "D\#", "E", "F", "F\#", "G", "G\#", "A", "A\#", "B"]} tandis que la position verticale (y) donnait l'octave de la note. Cette version donnait un résultat exploitable, mais il n'y avait pas non plus un grand intérêt de recherche musicale, nous aviens juste fait un piano carré.\\
 
 Finalement, nous avons choisi de construire un système de grille avec différents pavages, généré à partir d'un fichier MIDI.
-Ainsi, nous utilisons la bibliothèque \texttt{Mido} pour parcourir un fichier MIDI d'une musique et extraire la première note du morceau et les deux intervalles les plus fréquents.
+L'idée est donc d'adapter les notes jouées par le pavage sur une musique existante, en reproduisant un espace qui lui est propre.
+Ainsi, nous utilisons la bibliothèque \texttt{Mido} pour parcourir un fichier MIDI d'une musique et extraire la première note du morceau, la note la plus jouée et les deux intervalles les plus fréquents. Cela permet de placer au centre du pavage la première note, et de placer sur les différents axes les intervalles le plus fréquents. Ainsi l'utilisateur peut rejouer la musique de départ facilement dans ce pavage en partant de la case centrale et en se déplaçant (de proche en proche la plupart du temps) sur les notes.
 
 \subsection{Les grilles}
 \label{sec:grilles}
+Nous avons tenté différents pavage qui ont chacuns des propriétés différentes et qui sont donc plus ou moins interresant musicalement. Pour commencer nous avons fait un pavage rectangulaire, avec seulement deux directions. Ici une case correspond à une note. Ce pavage est vite limitant car il ne possède que deux axes.
+
+Nous nous sommes donc ensuite dirigé vers le pavage triangulaire qui a l'avantage d'avoir un axe de plus en théorie. En pratique cet axe de plus est juste la combinaison des deux autres, donc pas réellement de possibilité supplémentaire. L'inconvéniant de ce pavage est l'impossibilité de ce déplacer sur un même axe en cotinu. En passant sur la base du triangle on arrive ensuite sur un sommet, qui rend impossible le passage à son voisin sans touche une autre case.
+
+
+Nous nous sommes finalement orienté vers le pavage hexagonal qui combine plusieurs avantages, il a plus d'axe que le pavage rectangulaire n'a pas le problème de continuité du triangle
+
 
 Dans un premier temps, nous avons divisé la fenêtre graphique selon un pavage rectangulaire : l'axe des abscisses était divisé en sept pour représenter les octaves et l'axe des ordonnées était séparé en douze pour représenter les notes de la gamme chromatique.
 
