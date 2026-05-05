@@ -36,7 +36,7 @@ def hex_points_to_notes(parsed_midi: dict):
     assigned = {root_point} # Set of points that are assigned to a note
 
     # Define the distance between hexagon centers
-    dx = side * 1.5 
+    dx = side
     dy = math.sqrt(3) * side
 
     while queue:
@@ -44,6 +44,7 @@ def hex_points_to_notes(parsed_midi: dict):
         curr_note = hex_points_notes[curr]
 
         # Define the relative positions and intervals for the 6 neighbors in a hex grid
+        # Corner Top left = (0, 0)
         neighbors_vec = [
             ((dx, 0), int_h), # Right
             ((-dx, 0), -int_h), # Left
