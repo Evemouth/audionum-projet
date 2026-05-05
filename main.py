@@ -2,6 +2,8 @@ import pygame
 import pygame.midi
 import time
 import numpy as np
+import sys
+
 import units
 from sound import draw_to_sound, draw_to_note_hexagonal_adaptative, hex_points_to_notes, draw_grid_notes
 from parser import parse_midi_file
@@ -22,7 +24,6 @@ midi_out = pygame.midi.Output(midi_out_id, 0)
 midi_out.set_instrument(0)
 current_notes = [None, None, None]
 
-
 mouse_down = False
 previous_mouse_pos = None
 width = 20
@@ -35,7 +36,10 @@ PALETTE_SIZE = 40
 PALETTE_MARGIN = 5
 PALETTE_X = PALETTE_MARGIN
 
-INPUT_FILE = "get_lucky.mid"
+if (len(sys.argv) > 1):
+    INPUT_FILE = sys.argv[1]
+else:
+    INPUT_FILE = "get_lucky.mid"
 
 screen.fill("white")
 draw_grid(screen)
@@ -106,9 +110,9 @@ while running:
         pygame.draw.circle(screen, color, pygame.mouse.get_pos(), width // 2)
         if previous_mouse_pos is not None:
             pygame.draw.line(screen, color, previous_mouse_pos, pygame.mouse.get_pos(), width)
-        
+
         previous_mouse_pos = pygame.mouse.get_pos()
-        
+
         if MIDI:
             sound = draw_to_note(pygame.mouse.get_pos(), pygame.mouse.get_rel(), width, color)
             if sound["pitches"] != current_notes:
