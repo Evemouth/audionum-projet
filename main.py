@@ -3,6 +3,8 @@ import pygame.midi
 import time
 import numpy as np
 import sys
+import os
+import mido
 
 import units
 from sound import draw_to_sound, draw_to_note_hexagonal_adaptative, hex_points_to_notes, draw_grid_notes
@@ -31,10 +33,26 @@ color = "black"
 
 MIDI = True
 
+recorded_midi = mido.MidiFile()
+recorded_track = mido.MidiTrack()
+recorded_midi.tracks.append(recorded_track)
+
+last_event_time = time.time()
+
+def get_midi_ticks():
+    global last_event_time
+    current_time = time.time()
+    delta_seconds = current_time - last_event_time
+    last_event_time = current_time
+    return int(delta_seconds * 960)
+
 PALETTE_COLORS = ["black", "red", "orange", "yellow", "green", "blue", "purple", "white"]
 PALETTE_SIZE = 40
 PALETTE_MARGIN = 5
 PALETTE_X = PALETTE_MARGIN
+
+os.makedirs("dessins", exist_ok=True)
+os.makedirs("musiques", exist_ok=True)
 
 if (len(sys.argv) > 1):
     INPUT_FILE = sys.argv[1]
@@ -75,7 +93,9 @@ while running:
             elif event.key == pygame.K_c:
                 running = False
             elif event.key == pygame.K_s:
-                pygame.image.save(screen, f"dessins/dessin_{time.time()}.png")
+                pygame.image.save(screen, f"dessins/dessin_{int(time.time())}.png")
+                nom_fichier_sortie = f"musiques/musique_{int(time.time())}.mid"
+                recorded_midi.save(nom_fichier_sortie)
             elif (event.key in (pygame.K_DELETE, pygame.K_BACKSPACE, pygame.K_z)) and not mouse_down:
                 screen.fill("white")
                 draw_grid(screen)
@@ -101,9 +121,12 @@ while running:
                 mouse_down = False
                 previous_mouse_pos = None
                 if MIDI and current_notes != [None, None, None]:
-                    for pitch in current_notes:
+                    ticks = get_midi_ticks()
+                    for i, pitch in enumerate(current_notes):
                         if pitch is not None:
                             midi_out.note_off(pitch, 100)
+                            time_delay = ticks if i == 0 else 0
+                            recorded_track.append(mido.Message('note_off', note=pitch, velocity=100, time=time_delay))
                 current_notes = [None, None, None]
 
     if mouse_down:
@@ -116,15 +139,23 @@ while running:
         if MIDI:
             sound = draw_to_note(pygame.mouse.get_pos(), pygame.mouse.get_rel(), width, color)
             if sound["pitches"] != current_notes:
+                ticks = get_midi_ticks()
                 if current_notes != [None, None, None]:
-                    for pitch in current_notes:
+                    for i, pitch in enumerate(current_notes):
                         midi_out.note_off(pitch, 100)
+                        time_delay = ticks if i == 0 else 0
+                        recorded_track.append(mido.Message('note_off', note=pitch, velocity=100, time=time_delay))
+                    ticks = 0
                 instrument = units.instruments[PALETTE_COLORS.index(color)]
                 if instrument is None:
                     instrument = parsed_midi["instrument"]
                 midi_out.set_instrument(instrument)
-                for pitch in sound["pitches"]:
+                recorded_track.append(mido.Message('program_change', program=instrument, time=ticks))
+                ticks = 0
+                for i, pitch in enumerate(sound["pitches"]):
                     midi_out.note_on(pitch, 100)
+                    time_delay = ticks if i == 0 else 0
+                    recorded_track.append(mido.Message('note_on', note=pitch, velocity=100, time=time_delay))
                 current_notes = sound["pitches"]
         else:
             sound = draw_to_sound(pygame.mouse.get_pos(), pygame.mouse.get_rel(), width, color)
