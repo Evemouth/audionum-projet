@@ -1,7 +1,7 @@
 import numpy as np
 import math
 import units
-from grid import hex_points, side
+from grid import hex_points, side, circle_ray
 
 from collections import deque
 
@@ -192,15 +192,29 @@ def draw_to_note_hexagonal_adaptative(mouse_position: tuple[int, int], mouse_spe
     mx, my = mouse_position
     sx, sy = mouse_speed
 
-    # Search for the 3 closest hexagon points to the mouse position
-    closest_points = sorted(hex_points, key=lambda p: (p[0] - mx)**2 + (p[1] - my)**2)[:3]
+    # Sort the points by squared distance
+    unique_hex_points = list(set(hex_points))
+    sorted_points = sorted(unique_hex_points, key=lambda p: (p[0] - mx)**2 + (p[1] - my)**2)
 
-    # Assign MIDI notes to these points based on their distance to the mouse position
+    closest_point = sorted_points[0]
+    
+    # Calculate the squared distance to the closest point
+    dist_sq = (closest_point[0] - mx)**2 + (closest_point[1] - my)**2
+
     pitches = []
-    for p in closest_points:
-        note = hex_points_notes.get(p)
+    
+    # If the mouse is inside the visual circle of the closest point
+    if dist_sq <= circle_ray**2:
+        note = hex_points_notes.get(closest_point)
         if note is not None:
-            pitches.append(max(0, min(127, int(note)))) # Ensure MIDI note is within valid range (0-127)
+            correct_note = max(0, min(127, int(note)))
+            pitches = [correct_note, correct_note, correct_note] # Repeat the same note 3 times
+    else:
+        # Else the 3 closest points
+        for p in sorted_points[:3]:
+            note = hex_points_notes.get(p)
+            if note is not None:
+                pitches.append(max(0, min(127, int(note)))) # Ensure MIDI note is within valid range (0-127)
 
     # Calculate velocity based on mouse speed
     base_velocity = 100 + (abs(sx) + abs(sy)) // 2

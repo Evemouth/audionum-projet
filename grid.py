@@ -73,6 +73,5 @@ def draw_hex_grid(surface):
                 
             draw_hexagon(surface, color, (x, y), side)
 
-def draw_grid(surface):
-    #draw_triangle_grid_dual(surface)
+def draw_grid(surface):    
     draw_hex_grid(surface)
