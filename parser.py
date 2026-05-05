@@ -36,6 +36,10 @@ def print_midi_file(file_path):
           elif msg.type == 'note_off':
               print(f"Fin de note: {msg.note}")
 
+  for track in mid.tracks:
+      for msg in track:
+          if msg.type == 'program_change':
+              print(f"Instrument: {msg.program}")
   freq_note = list(dict(sorted(freq_note.items(), key=lambda item: item[1], reverse=True)).keys())[0]
   freq_tone = dict(sorted(freq_tone.items(), key=lambda item: item[1], reverse=True))
 
@@ -73,9 +77,11 @@ def parse_midi_file(file_path):
     return {
         "first_note": first_note,
         "sorted_notes": sort_note[0],
-        "tones": freq_tone
+        "tones": freq_tone,
+        "instrument": [msg.program for track in mid.tracks for msg in track if msg.type == 'program_change'][0]
     }
 
 if __name__ == "__main__":
-    print(parse_midi_file('au_clair_de_la_lune.mid'))
+    print(parse_midi_file('calabria.mid'))
+    print_midi_file('calabria.mid')
 

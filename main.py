@@ -119,7 +119,10 @@ while running:
                 if current_notes != [None, None, None]:
                     for pitch in current_notes:
                         midi_out.note_off(pitch, 100)
-                midi_out.set_instrument(units.instruments[PALETTE_COLORS.index(color)])
+                instrument = units.instruments[PALETTE_COLORS.index(color)]
+                if instrument is None:
+                    instrument = parsed_midi["instrument"]
+                midi_out.set_instrument(instrument)
                 for pitch in sound["pitches"]:
                     midi_out.note_on(pitch, 100)
                 current_notes = sound["pitches"]

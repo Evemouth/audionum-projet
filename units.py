@@ -11,7 +11,7 @@ lettres = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 # 13 : Xylophone
 # 114 : Steel Drums
 # 48 : String Ensemble 1
-instruments = [0, 24, 40, 56, 73, 13, 114, 48]
+instruments = [None, 0, 24, 40, 56, 73, 13, 114]
 
 def note_to_midi(note_index : int, octave : int) -> int:
     return (octave + 1) * 12 + note_index
