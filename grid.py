@@ -56,6 +56,7 @@ def draw_hexagon(surface, color, center, size):
         pygame.draw.line(surface, color, center, point, 1)
 
     pygame.draw.circle(surface, "gainsboro", center, circle_ray)
+    pygame.draw.circle(surface, "lightslategray", center, circle_ray, width=2)
     for point in points:
         pygame.draw.circle(surface, "gainsboro", point, circle_ray)
 
