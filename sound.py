@@ -54,8 +54,8 @@ def hex_points_to_notes(parsed_midi: dict):
         ]
 
         # For each neighbor, calculate the theoretical position and find the closest actual point
-        for delta, interval in neighbors_vec:
-            n_pos = (curr[0] + delta[0], curr[1] + delta[1])
+        for mouv, interval in neighbors_vec:
+            n_pos = (curr[0] + mouv[0], curr[1] + mouv[1])
             target = min(hex_points, key=lambda p: (p[0] - n_pos[0])**2 + (p[1] - n_pos[1])**2)
             
             dist_check = math.sqrt((target[0] - n_pos[0])**2 + (target[1] - n_pos[1])**2)
