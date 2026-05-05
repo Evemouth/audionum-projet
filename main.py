@@ -63,7 +63,7 @@ def draw_palette(surface, selected_color):
             pygame.draw.circle(surface, "gray", (cx, cy), radius, 3)
 
 def draw_to_note(mouse_position: tuple[int, int], mouse_speed: tuple[int, int], width: int, color: str) -> dict:
-    return draw_to_note_hexagonal_adaptative(parsed_midi, mouse_position, mouse_speed, width, color)
+    return draw_to_note_hexagonal_adaptative(mouse_position, mouse_speed, width, color)
 
 while running:
     for event in pygame.event.get():

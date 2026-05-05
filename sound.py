@@ -188,7 +188,7 @@ def draw_to_note_hexagonal(mouse_position: tuple[int, int], mouse_speed: tuple[i
         "velocity": 100 + (abs(sx) + abs(sy)) // 2
     }
 
-def draw_to_note_hexagonal_adaptative(parsed_midi: dict, mouse_position: tuple[int, int], mouse_speed: tuple[int, int], width: int, color: str) -> dict:
+def draw_to_note_hexagonal_adaptative(mouse_position: tuple[int, int], mouse_speed: tuple[int, int], width: int, color: str) -> dict:
     mx, my = mouse_position
     sx, sy = mouse_speed
 
